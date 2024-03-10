@@ -1,0 +1,342 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct
+{
+    char student_name[50];
+    int semester;
+    char course_unit[50];
+    int credits;
+    float qualification;
+} Academic_students_situation;
+
+void print_elements(Academic_students_situation *exams, int size);
+int get_element(Academic_students_situation *exams, int size);
+int find_the_position_of_the_element_in_the_array(Academic_students_situation *exams, char *element, int size);
+void free_allocated_memory(Academic_students_situation *exams, int size);
+void sort_elements(Academic_students_situation *exams, int size);
+Academic_students_situation read_new_element(Academic_students_situation *new_element);
+void add_element_to_the_final_of_the_array(Academic_students_situation **exams, int *size);
+void add_element_to_the_beginning_of_the_array(Academic_students_situation **exams, int *size);
+void ad_element_on_position_x(Academic_students_situation **exams, int *size);
+void delete_element_from_position_x(Academic_students_situation **exams, int *size);
+void select_from_menu_2(Academic_students_situation *exams, int size, int choose);
+void menu_2(Academic_students_situation *exams, int size);
+void read_elements(Academic_students_situation *exams, int size);
+void solve_subject_2();
+
+int main()
+{
+    solve_subject_2();
+    return 0;
+}
+
+void solve_subject_2()
+{
+    int size = 0;
+    printf("ai selectat subiectul 2\n\n");
+    printf("aici v-om crea o schita a unui tablou de structuri\n cu notele de la examen a studentilor\n\n");
+    printf("pasul 1\n\n");
+    printf("specifica cate examene sunt: ");
+    scanf("%d", &size);
+
+    while (getchar() != '\n')
+        ;
+    Academic_students_situation *exams = (Academic_students_situation *)calloc(size, sizeof(Academic_students_situation));
+
+    read_elements(exams, size);
+
+    printf("elementele au fost introduse cu succes\n");
+
+    menu_2(exams, size);
+}
+
+Academic_students_situation read_new_element(Academic_students_situation *new_element)
+{
+
+    printf("Introduceti datele noului element:\n");
+    printf("Nume student: ");
+    scanf("%s", new_element->student_name);
+    printf("Semestru: ");
+    scanf("%d", &new_element->semester);
+    printf("Unitate curs: ");
+    scanf("%s", new_element->course_unit);
+    printf("Credite: ");
+    scanf("%d", &new_element->credits);
+    printf("Calificare: ");
+    scanf("%f", &new_element->qualification);
+
+    return *new_element;
+}
+
+void read_elements(Academic_students_situation *exams, int size)
+{
+    printf("Specifica urmatoarele cerinte:\n\n");
+
+    for (int i = 0; i < size; i++)
+    {
+        read_new_element(&exams[i]);
+    }
+}
+
+void menu_2(Academic_students_situation *exams, int size)
+{
+
+    int choose = 0;
+    printf("alege o optiune din meniul de mai jos\n\n");
+
+    printf("\n\nMENU:\n\n");
+
+    printf(" 1- afișarea la consolă a elementelor tabloului;\n 2- căutarea unui element după o valoarea a unui cîmp din structură\n și returnarea poziției unde se află primul element găsit\n 3- eliberarea memoriei tabloului\n 4- sortarea elementelor după un cîmp a structurii;\n 5- inserarea unui element nou la capătul tabloului;\n 6- inserarea unui element nou la începutul tabloului;\n 7- insearea unui element la o poziție X (introdusă de la tastatură) în cadrul tabloului;\n 8- ștergerea unui element de pe o poziție X ( introdusă de la tastatură) din cadrul tabloului.\n\n");
+
+    select_from_menu_2(exams, size, choose);
+}
+
+void select_from_menu_2(Academic_students_situation *exams, int size, int choose)
+{
+
+    scanf("%d", &choose);
+
+    switch (choose)
+    {
+    case 1:
+
+        print_elements(exams, size);
+
+        break;
+
+    case 2:
+
+        int position = 0;
+
+        position = get_element(exams, size);
+
+        printf("se afla la pozitia  %d\n", position);
+
+        break;
+
+    case 3:
+
+        free_allocated_memory(exams, size);
+        break;
+
+    case 4:
+        sort_elements(exams, size);
+        break;
+
+    case 5:
+
+        add_element_to_the_final_of_the_array(&exams, &size);
+
+        break;
+    case 6:
+
+        add_element_to_the_beginning_of_the_array(&exams, &size);
+
+        break;
+    case 7:
+
+        ad_element_on_position_x(&exams, &size);
+
+        break;
+
+    case 8:
+
+        delete_element_from_position_x(&exams, &size);
+
+        break;
+    }
+
+    menu_2(exams, size);
+}
+
+void print_student_academic_situation(Academic_students_situation *exams)
+{
+
+    printf("rezultatele studentului %s\n", exams->student_name);
+
+    printf("Semestru:%d\n", exams->semester);
+
+    printf("Unitate curs %s\n", exams->course_unit);
+
+    printf("Credite %d\n", exams->credits);
+
+    printf("Calificare %f\n", exams->qualification);
+}
+
+void print_elements(Academic_students_situation *exams, int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        printf("obiectul %d\n", i + 1);
+        print_student_academic_situation(&exams[i]);
+        printf("\n");
+    }
+}
+
+int get_element(Academic_students_situation *exams, int size)
+{
+    char element[50];
+    int answear = 0;
+    printf("specifica numele disciplinei pentru a returna pozita la care se afla in tabloul unidimensional de structuri\n");
+    for (int i = 0; i < 2; i++)
+    {
+        if (fgets(element, sizeof(element), stdin))
+        {
+
+            element[strcspn(element, "\n")] = '\0';
+        }
+    }
+    answear = find_the_position_of_the_element_in_the_array(exams, element, size);
+    printf("%s ", element);
+    return answear;
+}
+
+int find_the_position_of_the_element_in_the_array(Academic_students_situation *exams, char *element, int size)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+
+        if (strcmp(exams[i].course_unit, element) == 0)
+        {
+
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+void free_allocated_memory(Academic_students_situation *exams, int size)
+{
+
+    int choose = 0;
+
+    printf("esti sigur ca doresti sa eliberezi memoria ?\n\n acest lucru duce la pierderea tuturor datelor\n");
+
+    printf("tasteaza 1 pentru da\ntasteaza 2 pentru a nu\n");
+
+    scanf("%d", &choose);
+
+    if (choose == 1)
+    {
+
+        free(exams);
+
+        printf("memoria a fost eliberata cu succes\n\ndoresti sa reei de la inceput programul?\n1-da\n2-nu\n");
+        choose = 0;
+        scanf("%d", &choose);
+
+        if (choose == 1)
+        {
+
+            solve_subject_2();
+        }
+
+        if (choose == 2)
+        {
+
+            printf("END OF PROGRAM");
+        }
+    }
+
+    if (choose == 2)
+    {
+
+        printf("ai anulat executia de eliberare a memoriei\n\n");
+    }
+}
+
+void sort_elements(Academic_students_situation *exams, int size)
+{
+    printf("aceasta functie va sorta elementele in functie de nota medie in ordine descrescatoare si va afisa denumirea disciplinelor respective.\n");
+
+    Academic_students_situation temp;
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        for (int j = i + 1; j < size; j++)
+        {
+            if (exams[i].qualification < exams[j].qualification)
+            {
+                temp = exams[i];
+                exams[i] = exams[j];
+                exams[j] = temp;
+            }
+        }
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+
+        printf("%s - %2f\n", exams[i].course_unit, exams[i].qualification);
+    }
+}
+
+void add_element_to_the_final_of_the_array(Academic_students_situation **exams, int *size)
+{
+    (*size)++;
+    *exams = (Academic_students_situation *)realloc(*exams, *size * sizeof(Academic_students_situation));
+    Academic_students_situation new_element;
+
+    (*exams)[*size - 1] = read_new_element(&new_element);
+}
+
+void add_element_to_the_beginning_of_the_array(Academic_students_situation **exams, int *size)
+{
+    (*size)++;
+    *exams = (Academic_students_situation *)realloc(*exams, *size * sizeof(Academic_students_situation));
+
+    for (int i = *size - 1; i > 0; --i)
+    {
+        (*exams)[i] = (*exams)[i - 1];
+    }
+
+    Academic_students_situation new_element;
+
+    (*exams)[0] = read_new_element(&new_element);
+}
+
+void ad_element_on_position_x(Academic_students_situation **exams, int *size)
+{
+    int position;
+    if (*size == 0)
+    {
+        add_element_to_the_final_of_the_array(exams, size);
+        return;
+    }
+
+    printf("Indică poziția noului element: ");
+    scanf("%d", &position);
+
+    (*size)++;
+    *exams = (Academic_students_situation *)realloc(*exams, *size * sizeof(Academic_students_situation));
+
+    for (int i = *size - 1; i > position; --i)
+    {
+        (*exams)[i] = (*exams)[i - 1];
+    }
+
+    Academic_students_situation new_element;
+
+    (*exams)[position] = read_new_element(&new_element);
+}
+
+void delete_element_from_position_x(Academic_students_situation **exams, int *size)
+{
+    int position;
+    printf("specifica pozitia de la care trebuie sters elementul");
+    scanf("%d", &position);
+
+    for (int i = position; i < *size - 1; ++i)
+    {
+        (*exams)[i] = (*exams)[i + 1];
+    }
+
+    (*size)--;
+    *exams = (Academic_students_situation *)realloc(*exams, *size * sizeof(Academic_students_situation));
+    printf("Elementul de pe poziția %d a fost șters.\n", position);
+}
