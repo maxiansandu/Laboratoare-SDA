@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct
+{
+    char brand[20];
+    char model[20];
+    char color[20];
+    int production_year;
+    int max_speed;
+} Car;
+
+void solve_subject_1();
+void print_car(Car *car);
+void read_car(Car *car);
+void print_elements(Car *cars, int size);
+void read_elements(Car *cars, int size);
+int find_position(Car *cars, char *element, int size);
+
+int main()
+{
+    solve_subject_1();
+    return 0;
+}
+
+void solve_subject_1()
+{
+    int size = 0;
+    int choose_action = 0;
+    char element[20];
+
+    printf("Ai selectat subiectul 1\n\n");
+
+    printf("Pasul 1: Alocarea unui tablou static unidimensional de structuri\n");
+
+    printf("Indica numarul de masini: ");
+    scanf("%d", &size);
+
+    Car my_cars[size];
+
+    printf("Pasul 2: Specifica de la tastatura fiecare element\n");
+
+    read_elements(my_cars, size);
+
+    printf("Pasul 3: Tasteaza 1 pentru a afisa elementele tabloului\n");
+    scanf("%d", &choose_action);
+    if (choose_action == 1)
+    {
+        print_elements(my_cars, size);
+    }
+
+    printf("Pasul 4: Specifica marca masinii pentru a returna pozitia la care se afla in tablou\n");
+    printf("Marca masinii: ");
+    scanf("%s", element);
+
+    int position = find_position(my_cars, element, size);
+    if (position != -1)
+    {
+        printf("Marca %s se afla la pozitia %d\n", element, position);
+    }
+    else
+    {
+        printf("Masina nu a fost gasita\n");
+    }
+}
+
+void print_car(Car *car)
+{
+
+    printf("Marca: %s\n", car->brand);
+    printf("Model: %s\n", car->model);
+    printf("Culoare: %s\n", car->color);
+    printf("Anul de productie: %d\n", car->production_year);
+    printf("Viteza maxima: %d\n\n", car->max_speed);
+}
+
+void read_car(Car *car)
+{
+    printf("Marca: ");
+    scanf("%s", car->brand);
+
+    printf("Model: ");
+    scanf("%s", car->model);
+
+    printf("Culoare: ");
+    scanf("%s", car->color);
+
+    printf("Anul de productie: ");
+    scanf("%d", &car->production_year);
+
+    printf("Viteza maxima: ");
+    scanf("%d", &car->max_speed);
+}
+
+void read_elements(Car *cars, int size)
+{
+
+    printf("specifica datele necesare\n\n");
+    for (int i = 0; i < size; i++)
+    {
+        printf("Masina %d:\n", i + 1);
+        read_car(&cars[i]);
+    }
+}
+
+void print_elements(Car *cars, int size)
+{
+    printf("Datele despre masini:\n\n");
+    for (int i = 0; i < size; i++)
+    {
+        printf("Masina %d:\n", i + 1);
+        print_car(&cars[i]);
+    }
+}
+
+int find_position(Car *cars, char *element, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (strcmp(cars[i].brand, element) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
