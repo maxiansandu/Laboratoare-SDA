@@ -1,0 +1,350 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct
+{
+    char brand[50];
+    char model[50];
+    char color[50];
+    int built_in_memory;
+    int ram;
+    int price;
+} Phone_store;
+
+typedef struct Node
+{
+    Phone_store phone;
+    struct Node *next;
+} Node;
+
+void reverse_list(Node **head_reference);
+void pop(Node **head_reference, int position);
+void take_position(Node **head_reference);
+void insert_at_position(Node **head_reference, Phone_store phone_data, int position);
+void insert_element_on_specificated_position(Node **head_reference, Phone_store phone_data);
+void push_front(Node **head_reference, Phone_store phone_data);
+void push_back(Node **head_reference, Phone_store phone_data);
+void sort_by_price_descendent(Node **head_reference);
+void free_list(Node *head);
+void find_element(Node *head);
+int find_position(Node *head, char *brand);
+void print_list(Node *head);
+void append(Node **head_reference, Phone_store phone_data);
+void read_phone(Phone_store *phone);
+void read_list(Node **head_reference);
+void menu_2(Node **head_reference);
+
+int main()
+{
+    Node *head = NULL;
+    menu_2(&head);
+    return 0;
+}
+
+void menu_2(Node **head_reference)
+{
+    int choose = 0;
+    Phone_store new_phone;
+    while (1)
+    {
+        printf("\n\nMENU\n\n");
+        printf("1 Read from keyboard the list elements\n");
+        printf("2 Display the list elements on the console\n");
+        printf("3 Search an element by a field value in the structure and return the position where the first found element is located\n");
+        printf("4 Free the list memory\n");
+        printf("5 Sort the elements by a field in the structure\n");
+        printf("6 Insert a new element at the end of the list\n");
+        printf("7 Insert a new element at the beginning of the list\n");
+        printf("8 Insert an element at a specific position X (entered from keyboard) within the list\n");
+        printf("9 Delete an element from a position X (entered from keyboard) within the list\n");
+        printf("10 Reverse the order of elements in the list\n");
+        printf("11 Clear the list.\n\n");
+        printf("Choose an option: ");
+        scanf("%d", &choose);
+        switch (choose)
+        {
+        case 1:
+            read_list(head_reference);
+            break;
+        case 2:
+            print_list(*head_reference);
+            break;
+        case 3:
+            find_element(*head_reference);
+            break;
+        case 4:
+            free_list(*head_reference);
+            break;
+        case 5:
+            sort_by_price_descendent(head_reference);
+            printf("List sorted in descending order by price\n");
+            print_list(*head_reference);
+            break;
+        case 6:
+            read_phone(&new_phone);
+            push_back(head_reference, new_phone);
+            break;
+        case 7:
+            read_phone(&new_phone);
+            push_front(head_reference, new_phone);
+            break;
+        case 8:
+            read_phone(&new_phone);
+            insert_element_on_specificated_position(head_reference, new_phone);
+            break;
+        case 9:
+            take_position(head_reference);
+            break;
+        case 10:
+            reverse_list(head_reference);
+            break;
+        case 11:
+            free_list(*head_reference);
+            *head_reference = NULL;
+            break;
+        default:
+            printf("???");
+            break;
+        }
+    }
+}
+
+void read_list(Node **head_reference)
+{
+    int n;
+    printf("Enter the number of phones: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; ++i)
+    {
+        Phone_store phone_data;
+        read_phone(&phone_data);
+        append(head_reference, phone_data);
+    }
+}
+
+void read_phone(Phone_store *phone)
+{
+    printf("Enter the brand of the phone: ");
+    scanf("%s", phone->brand);
+    while (getchar() != '\n')
+        ;
+
+    printf("Enter the model of the phone: ");
+    scanf("%s", phone->model);
+    while (getchar() != '\n')
+        ;
+
+    printf("Enter the color of the phone: ");
+    scanf("%s", phone->color);
+    while (getchar() != '\n')
+        ;
+
+    printf("Enter the built-in memory of the phone (GB): ");
+    scanf("%d", &phone->built_in_memory);
+    while (getchar() != '\n')
+        ;
+
+    printf("Enter the RAM of the phone (GB): ");
+    scanf("%d", &phone->ram);
+    while (getchar() != '\n')
+        ;
+
+    printf("Enter the price of the phone: ");
+    scanf("%d", &phone->price);
+    while (getchar() != '\n')
+        ;
+}
+
+void append(Node **head_reference, Phone_store phone_data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+
+    new_node->phone = phone_data;
+    new_node->next = NULL;
+    if (*head_reference == NULL)
+    {
+        *head_reference = new_node;
+        return;
+    }
+    Node *last = *head_reference;
+    while (last->next != NULL)
+        last = last->next;
+    last->next = new_node;
+}
+
+void print_list(Node *head)
+{
+    printf("List of phones:\n");
+    while (head != NULL)
+    {
+        printf("Brand: %s, Model: %s, Color: %s, Built-in Memory: %d GB, RAM: %d GB, Price: %d\n",
+               head->phone.brand, head->phone.model, head->phone.color,
+               head->phone.built_in_memory, head->phone.ram, head->phone.price);
+        head = head->next;
+    }
+}
+
+void find_element(Node *head)
+{
+    char brand[50];
+    printf("Enter the brand of the phone for search: ");
+    scanf("%s", brand);
+    int position = find_position(head, brand);
+    if (position != -1)
+    {
+        printf("The phone with brand %s is at position %d in the list\n", brand, position);
+    }
+    else
+    {
+        printf("The phone with brand %s was not found in the list\n", brand);
+    }
+}
+
+int find_position(Node *head, char *brand)
+{
+    int position = 1;
+    while (head != NULL)
+    {
+        if (strcmp(head->phone.brand, brand) == 0)
+        {
+            return position;
+        }
+        head = head->next;
+        position++;
+    }
+    return -1;
+}
+
+void free_list(Node *head)
+{
+    Node *temp;
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void sort_by_price_descendent(Node **head_reference)
+{
+    int swapped;
+    Node *ptr1;
+    Node *last_sorted_node = NULL;
+
+    do
+    {
+        swapped = 0;
+        ptr1 = *head_reference;
+
+        while (ptr1->next != last_sorted_node)
+        {
+            if (ptr1->phone.price < ptr1->next->phone.price)
+            {
+                Phone_store temp = ptr1->phone;
+                ptr1->phone = ptr1->next->phone;
+                ptr1->next->phone = temp;
+                swapped = 1;
+            }
+            ptr1 = ptr1->next;
+        }
+        last_sorted_node = ptr1;
+    } while (swapped);
+}
+
+void push_back(Node **head_reference, Phone_store phone_data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+
+    new_node->phone = phone_data;
+    new_node->next = NULL;
+
+    Node *current = *head_reference;
+    while (current->next != NULL)
+    {
+        current = current->next;
+    }
+
+    current->next = new_node;
+}
+
+void push_front(Node **head_reference, Phone_store phone_data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+
+    new_node->phone = phone_data;
+    new_node->next = *head_reference;
+    *head_reference = new_node;
+}
+
+void insert_element_on_specificated_position(Node **head_reference, Phone_store phone_data)
+{
+    int position;
+    printf("Enter the position where you want to insert the phone: ");
+    scanf("%d", &position);
+    insert_at_position(head_reference, phone_data, position);
+}
+
+void insert_at_position(Node **head_reference, Phone_store phone_data, int position)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+
+    new_node->phone = phone_data;
+    new_node->next = NULL;
+
+    Node *current = *head_reference;
+
+    for (int i = 0; current != NULL && i < position - 1; i++)
+    {
+        current = current->next;
+    }
+
+    new_node->next = current->next;
+    current->next = new_node;
+}
+
+void take_position(Node **head_reference)
+{
+    int position = 0;
+    printf("Specify the position: ");
+    scanf("%d", &position);
+    pop(head_reference, position);
+}
+
+void pop(Node **head_reference, int position)
+{
+    Node *temp = *head_reference;
+
+    if (position == 1)
+    {
+        *head_reference = temp->next;
+        free(temp);
+        printf("The element at position %d was successfully deleted\n", position);
+        return;
+    }
+
+    for (int i = 1; temp != NULL && i < position - 1; i++)
+        temp = temp->next;
+
+    Node *next_node = temp->next->next;
+    free(temp->next);
+
+    temp->next = next_node;
+
+    printf("The element at position %d was successfully deleted\n", position);
+}
+
+void reverse_list(Node **head_reference)
+{
+    Node *prev = NULL;
+    Node *current = *head_reference;
+    while (current != NULL)
+    {
+        Node *next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head_reference = prev;
+}
